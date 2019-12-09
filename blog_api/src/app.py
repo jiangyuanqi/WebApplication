@@ -1,49 +1,25 @@
-import json
+# src/app.py
 
-from flask import request
+from flask import Flask
 
-from . import create_app, database
-from .models import Cats
-
-app = create_app()
+from .config import app_config
 
 
-@app.route('/', methods=['GET'])
-def fetch():
-    cats = database.get_all(Cats)
-    all_cats = []
-    for cat in cats:
-        new_cat = {
-            "id": cat.id,
-            "name": cat.name,
-            "price": cat.price,
-            "breed": cat.breed
-        }
+def create_app(env_name):
+    """
+    Create app
+    """
 
-        all_cats.append(new_cat)
-    return json.dumps(all_cats), 200
+    # app initiliazation
+    app = Flask(__name__)
 
+    app.config.from_object(app_config[env_name])
 
-@app.route('/add', methods=['POST'])
-def add():
-    data = request.get_json()
-    name = data['name']
-    price = data['price']
-    breed = data['breed']
+    @app.route('/', methods=['GET'])
+    def index():
+        """
+        example endpoint
+        """
+        return 'Congratulations! Your first endpoint is workin'
 
-    database.add_instance(Cats, name=name, price=price, breed=breed)
-    return json.dumps("Added"), 200
-
-
-@app.route('/remove/<cat_id>', methods=['DELETE'])
-def remove(cat_id):
-    database.delete_instance(Cats, id=cat_id)
-    return json.dumps("Deleted"), 200
-
-
-@app.route('/edit/<cat_id>', methods=['PATCH'])
-def edit(cat_id):
-    data = request.get_json()
-    new_price = data['price']
-    database.edit_instance(Cats, id=cat_id, price=new_price)
-    return json.dumps("Edited"), 200
+    return app
