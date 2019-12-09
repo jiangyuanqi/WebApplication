@@ -1,8 +1,8 @@
 # /src/views/UserView
 
-from flask import request, json, Response, Blueprint, g
+from flask import request, Blueprint, g
 from ..models.UserModel import UserModel, UserSchema
-from ..shared.Authentication import Auth
+from blog_api.src.shared import Auth
 
 user_api = Blueprint('user_api', __name__)
 user_schema = UserSchema()
